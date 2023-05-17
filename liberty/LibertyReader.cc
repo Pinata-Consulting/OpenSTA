@@ -18,6 +18,7 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <locale.h>
 
 #include "Report.hh"
 #include "Debug.hh"
@@ -41,6 +42,10 @@
 #include "Network.hh"
 
 extern int LibertyParse_debug;
+
+namespace {
+locale_t c_locale = newlocale(LC_ALL_MASK, "C", NULL);
+}
 
 namespace sta {
 
@@ -4610,7 +4615,7 @@ LibertyReader::getAttrFloat(LibertyAttr *attr,
       // For some reason area attributes for pads are quoted floats.
       // Check that the string is a valid double.
       char *end;
-      value = strtof(string, &end);
+      value = strtof_l(string, &end, c_locale);
       if (*end && !isspace(*end))
 	libWarn(135, attr, "%s value %s is not a float.",
 		attr->name(),
@@ -4668,7 +4673,7 @@ LibertyReader::parseStringFloatList(const char *float_list,
     if (*token == '{')
       token++;
     char *end;
-    float value = strtof(token, &end) * scale;
+    float value = strtof_l(token, &end, c_locale) * scale;
     if (end == token
 	|| (end && !(*end == '\0'
 		     || isspace(*end)
