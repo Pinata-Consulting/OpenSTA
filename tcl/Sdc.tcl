@@ -39,22 +39,13 @@ proc_redirect read_sdc {
 
 ################################################################
 
-# The builtin Tcl "source" command is redefined by sta.
-# This rename provides a mechanism to refer to the original TCL
-# command.
-# Protected so this file can be reloaded without blowing up.
-if { ![info exists renamed_source] } {
-  rename source builtin_source
-  set renamed_source 1
-}
-
 set ::sta_continue_on_error 0
 
 define_cmd_args "source" \
   {[-echo] [-verbose] filename [> filename] [>> filename]}
 
 # Override source to support -echo and return codes.
-proc_redirect source {
+proc_redirect sta_source {
   parse_key_args "source" args keys {-encoding} flags {-echo -verbose}
   if { [llength $args] != 1 } {
     cmd_usage_error "source"

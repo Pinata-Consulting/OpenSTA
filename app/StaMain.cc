@@ -83,15 +83,16 @@ findCmdLineKey(int &argc,
 // Use overridden version of source to echo cmds and results.
 int
 sourceTclFile(const char *filename,
-	      bool echo,
-	      bool verbose,
-	      Tcl_Interp *interp)
+              bool echo,
+              bool verbose,
+              Tcl_Interp *interp)
 {
   string cmd;
-  stringPrint(cmd, "source %s%s%s",
-	      echo ? "-echo " : "",
-	      verbose ? "-verbose " : "",
-	      filename);
+  stringPrint(cmd, "%ssource %s%s%s",
+             (echo || verbose) ? "sta::" : "",
+             echo ? "-echo " : "",
+             verbose ? "-verbose " : "",
+             filename);
   int code = Tcl_Eval(interp, cmd.c_str());
   const char *result = Tcl_GetStringResult(interp);
   if (result[0] != '\0')
